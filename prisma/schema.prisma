@@ -1,0 +1,166 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  CANCELLED
+}
+
+enum UserRole {
+  MEMBER
+  ADMIN
+}
+
+enum CartStatus {
+  EMPTY
+  ACTIVE
+  COMPLETED
+}
+
+model Contact_form {
+  id      Int    @id @default(autoincrement())
+  name    String
+  phone   String
+  email   String
+  message String
+}
+
+model User {
+  id               String             @id @default(uuid())
+  email_address    String?            @unique
+  mobile           String?            @unique
+  firstName        String
+  lastName         String
+  password         String
+  createdAt        DateTime           @default(now())
+  updateAt         DateTime           @updatedAt
+  role             UserRole           @default(MEMBER)
+  Cart             Cart[]
+  Shipping_address Shipping_address[]
+  Orders           Order[]
+}
+
+model Cart {
+  id         String       @id @default(uuid())
+  createdAt  DateTime     @default(now())
+  updateAt   DateTime     @updatedAt
+  status     CartStatus
+  user       User         @relation(fields: [userId], references: [id])
+  userId     String
+  Cart_items Cart_items[]
+}
+
+model Cart_items {
+  id        String   @id @default(uuid())
+  qty       Int
+  cartId    String
+  cart      Cart     @relation(fields: [cartId], references: [id])
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
+}
+
+model Product {
+  id               String             @id @default(uuid())
+  name             String
+  price            Decimal
+  SKU              String
+  Brand            String
+  stock            Int
+  desc             String
+  Cart_items       Cart_items[]
+  Product_category Product_category[]
+  Product_image    Product_image[]
+  Order_items      Order_items[]
+  menu_order       Int
+}
+
+model Product_image {
+  id        String  @id @default(uuid())
+  image_url String
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model Product_category {
+  id         String   @id @default(uuid())
+  categoryId String
+  productId  String
+  category   Category @relation(fields: [categoryId], references: [id])
+  product    Product  @relation(fields: [productId], references: [id])
+}
+
+model Category {
+  id               String             @id @default(uuid())
+  name             String
+  Product_category Product_category[]
+}
+
+model Shipping_address {
+  id             String  @id @default(uuid())
+  email          String
+  phone          String
+  firstName      String
+  lastName       String
+  street_address String
+  sub_district   String
+  district       String
+  province       String
+  zip            String
+  userId         String
+  user           User    @relation(fields: [userId], references: [id])
+  Orders         Order[]
+}
+
+model Payment_method {
+  id     String  @id @default(uuid())
+  name   String
+  Orders Order[]
+}
+
+model Shipping_method {
+  id     String  @id @default(uuid())
+  name   String
+  Orders Order[]
+}
+
+model Order {
+  id                 String           @id @default(uuid())
+  order_date         DateTime         @default(now())
+  payment_method     Payment_method   @relation(fields: [payment_methodId], references: [id])
+  payment_methodId   String
+  user               User             @relation(fields: [userId], references: [id])
+  userId             String
+  shipping_address   Shipping_address @relation(fields: [shipping_addressId], references: [id])
+  shipping_addressId String
+  shipping_method    Shipping_method  @relation(fields: [shipping_methodId], references: [id])
+  shipping_methodId  String
+  total_amount       Decimal
+  order_status       OrderStatus
+  order_number       Int?             @unique @default(autoincrement())
+  createdAt          DateTime         @default(now())
+  updateAt           DateTime         @updatedAt
+  Order_items        Order_items[]
+}
+
+model Order_items {
+  id        String  @id @default(uuid())
+  order     Order   @relation(fields: [orderId], references: [id])
+  orderId   String
+  price     Decimal
+  qty       Int
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+}
