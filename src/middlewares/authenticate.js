@@ -16,6 +16,7 @@ module.exports = async (req, res, next) => {
         id: payload.userId,
       },
     });
+
     if (!user) {
       return next(createError("Unauthorized", 401));
     }

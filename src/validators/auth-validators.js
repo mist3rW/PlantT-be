@@ -22,7 +22,7 @@ const registerSchema = Joi.object({
     is: Joi.string().pattern(/^[0-9]{10}$/),
     then: Joi.string().default(Joi.ref("emailOrMobile")),
   }),
-  email: Joi.forbidden().when("emailOrMobile", {
+  email_address: Joi.forbidden().when("emailOrMobile", {
     is: Joi.string().email(),
     then: Joi.string().default(Joi.ref("emailOrMobile")),
   }),

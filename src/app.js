@@ -9,6 +9,7 @@ const rateLimitMiddleware = require("./middlewares/rate-limit");
 const userRoute = require("./routes/user-route");
 const productRoute = require("./routes/product-route");
 const authRoute = require("./routes/auth-route");
+const catRoute = require("./routes/category-route");
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use(express.json());
 // # Start here
 app.use("/auth", authRoute);
 app.use("/product", productRoute);
+app.use("/category", catRoute);
 // ##############
 
 app.use(notFoundMiddleware);
