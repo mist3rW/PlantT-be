@@ -20,6 +20,7 @@ app.use(express.json());
 
 // # Start here
 app.use("/auth", authRoute);
+app.use("/user", userRoute);
 app.use("/product", productRoute);
 app.use("/category", catRoute);
 // ##############

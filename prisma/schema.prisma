@@ -85,15 +85,14 @@ model Product {
   Product_image    Product_image[]
   Order_items      Order_items[]
   menu_order       Int?               @default(0)
-  featuredImage    String
+  isFeatured       Boolean?           @default(false)
 }
 
 model Product_image {
-  id         String  @id @default(uuid())
-  image_url  String
-  isFeatured Boolean
-  productId  String
-  product    Product @relation(fields: [productId], references: [id])
+  id        String  @id @default(uuid())
+  image_url String
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
 }
 
 model Product_category {
