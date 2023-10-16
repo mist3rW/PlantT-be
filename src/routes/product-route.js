@@ -4,17 +4,12 @@ const uploadMiddleware = require("../middlewares/upload");
 
 const router = express.Router();
 
-router.post("/", productController.addProduct);
-router.get("/", productController.getProduct);
 router.post(
-  "/upload-product-image",
-  uploadMiddleware.fields([
-    {
-      name: "image_url",
-      maxCount: 1,
-    },
-  ]),
-  productController.uploadProductImage
+  "/",
+  uploadMiddleware.single("image_url"),
+  productController.addProduct
 );
+router.get("/", productController.getProduct);
+router.delete("/:id", productController.deleteProduct);
 
 module.exports = router;
