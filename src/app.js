@@ -11,6 +11,7 @@ const productRoute = require("./routes/product-route");
 const authRoute = require("./routes/auth-route");
 const catRoute = require("./routes/category-route");
 const cartRoute = require("./routes/cart-route");
+const checkoutRoute = require("./routes/checkout-route");
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use("/user", userRoute);
 app.use("/product", productRoute);
 app.use("/cart", cartRoute);
 app.use("/category", catRoute);
+app.use("/checkout", checkoutRoute);
 // ##############
 
 app.use(notFoundMiddleware);

@@ -109,3 +109,24 @@ exports.finishCart = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.clearUserCart = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const userCartItems = await prisma.cart_items.findMany({
+      where: {
+        userId,
+      },
+    });
+    await prisma.cart_items.deleteMany({
+      where: {
+        userId,
+      },
+    });
+    res.status(200).json({
+      message: "User's cart has been cleared succesfully!",
+    });
+  } catch (error) {
+    console.error("Error clearing user's cart:", error);
+  }
+};
