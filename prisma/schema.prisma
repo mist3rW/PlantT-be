@@ -128,22 +128,23 @@ model Shipping_method {
 }
 
 model Order {
-  id                 String           @id @default(uuid())
-  order_date         DateTime         @default(now())
-  payment_method     Payment_method   @relation(fields: [payment_methodId], references: [id])
+  id                 String            @id @default(uuid())
+  order_date         DateTime          @default(now())
+  payment_method     Payment_method    @relation(fields: [payment_methodId], references: [id])
   payment_methodId   String
-  user               User?            @relation(fields: [userId], references: [id])
+  user               User?             @relation(fields: [userId], references: [id])
   userId             String?
-  shipping_address   Shipping_address @relation(fields: [shipping_addressId], references: [id])
+  shipping_address   Shipping_address  @relation(fields: [shipping_addressId], references: [id])
   shipping_addressId String
-  shipping_method    Shipping_method  @relation(fields: [shipping_methodId], references: [id])
+  shipping_method    Shipping_method   @relation(fields: [shipping_methodId], references: [id])
   shipping_methodId  String
   total_amount       Decimal
   order_status       OrderStatus
-  order_number       Int?             @unique @default(autoincrement())
-  createdAt          DateTime         @default(now())
-  updateAt           DateTime         @updatedAt
+  order_number       Int?              @unique @default(autoincrement())
+  createdAt          DateTime          @default(now())
+  updateAt           DateTime          @updatedAt
   Order_items        Order_items[]
+  Confirm_payment    Confirm_payment[]
 }
 
 model Order_items {
@@ -154,4 +155,22 @@ model Order_items {
   qty       Int
   product   Product @relation(fields: [productId], references: [id])
   productId String
+}
+
+model Confirm_payment {
+  id             String       @id @default(uuid())
+  phone          String
+  bank_account   Bank_account @relation(fields: [bank_accountId], references: [id])
+  slip_img_url   String
+  orderId        String
+  order          Order        @relation(fields: [orderId], references: [id])
+  bank_accountId Int
+}
+
+model Bank_account {
+  id              Int               @id @default(autoincrement())
+  bank_name       String
+  account_name    String
+  account_number  String
+  Confirm_payment Confirm_payment[]
 }

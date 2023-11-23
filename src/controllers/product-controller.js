@@ -3,30 +3,6 @@ const createError = require("../utils/create-error");
 const { upload } = require("../utils/cloudinary-service");
 const cloudinary = require("../config/cloudinary");
 
-// exports.uploadProductImage = async (req, res, next) => {
-//   try {
-//     if (!req.files || !req.body.productId) {
-//       return next(createError("File or productId Not Found", 400));
-//     }
-//     const { path } = req.files.image_url[0];
-//     const imageURL = await upload(path);
-//     const productId = req.body.productId;
-//     const productImage = await prisma.Product_image.create({
-//       data: {
-//         image_url: imageURL,
-//         productId: productId,
-//       },
-//     });
-//     res
-//       .status(201)
-//       .json({ message: "Image uploaded successfully!", productImage });
-//   } catch (err) {
-//     console.error(err);
-//     console.log(err);
-//     next(err);
-//   }
-// };
-
 exports.addProduct = async (req, res, next) => {
   try {
     const { name, price, SKU, brand, stock, desc, categoryId, menu_order } =
@@ -124,6 +100,39 @@ exports.deleteProduct = async (req, res, next) => {
     });
   } catch (error) {
     console.error("Error deleting product:", error);
+    next(error);
+  }
+};
+
+exports.getSingleProduct = async (req, res, next) => {
+  try {
+    const { productId } = req.params;
+    const product = await prisma.product.findFirst({
+      where: {
+        id: productId,
+      },
+      include: {
+        Product_image: {
+          select: {
+            image_url: true,
+          },
+        },
+        Product_category: {
+          include: {
+            category: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    res
+      .status(200)
+      .json({ message: "Fetching Single Product Data successfully.", product });
+  } catch (error) {
+    console.error("Error fetching single product:", error);
     next(error);
   }
 };
